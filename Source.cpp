@@ -1,46 +1,116 @@
-/*
- * Calculator.cpp
- *
- *  Date: March 24, 2024
- *  Author: Erin Gagnon
- */
-
+/* This program allows the user to add hours,
+*minutes, and\or seconds to both a 
+*12 and 24 hour clock 
+*Author: Erin Gagnon
+*Date: 3/31/2024
+*/
+#include <ctime>
 #include <iostream>
-
+#include <string>
+#pragma warning(disable : 4996) //I got this from wikipedia to help bypass the time issue
 using namespace std;
 
-int main() //changes void main to int main
-{
-	char statement[100];
-	int op1, op2;
-	char operation;
-	char answer = 'Y' /*changed to single quotes*/;
-	while (answer == 'y' || answer == 'Y') //added uppercase inclusion in OR statement
-	{
-		cout << "Enter expression" << endl;
-		cin >> op1 >> operation >> op2; //changed order of op1 and op2
-		if (operation == '+') //removed semicolon, changed to "+" to single quote
-			cout << op1 << " + " << op2 << " = " << op1 + op2 << endl; //changed chevron direction
-		if (operation == '-') //removed semicolon
-			cout << op1 << " - " << op2 << " = " << op1 - op2 << endl; //changed chevron direction
-		if (operation == '*')
-			cout << op1 << " / " << op2 << " = " << op1 * op2 << endl; //added semicolon
-		if (operation == '/')
-			cout << op1 << " * " << op2 << " = " << op1 / op2 << endl;
 
-		cout << "Do you wish to evaluate another expression?(Y or N) " << endl; //added y or n for clarity
-		cin >> answer;
+//global variables
+int hour;
+int minutes;
+int seconds;
 
-		while (true)
-		{
+void GetTime() {
+	//gets time from motherboard
+	time_t ttime = time(0);
+	tm* local_time = localtime(&ttime);
 
-			if (answer != 'Y' && answer != 'y');  /*added language to terminate*/
-			cout << "Program Finished" << endl;
-			break;
+	//assigns time from local variable
+	hour = local_time->tm_hour;
+	minutes = local_time->tm_min;
+	seconds = local_time->tm_sec;
+}
 
-		}
-	
-
-		return 0;
+//this function adds an hour without exceeding 24 hrs
+void oneHour() {
+	hour ++;
+	if (hour > 23){
+		hour = 0;
 	}
+}
+
+//this function adds a minute without exceeding 59 min
+void oneMinute() {
+	minutes++;
+	if (minutes > 59) {
+		minutes = 0;
+	}
+}
+
+//this function adds a second without exceeding 59 secs
+void oneSecond() {
+	seconds++;
+	if (seconds > 59) {
+		seconds = 0;
+	}
+}
+
+
+//this function prints the 12 hr clock 
+void printClock() {
+	if (hour > 12) {
+		hour = hour - 12;
+	}
+		 std::cout << "12-HOUR CLOCK" << endl << hour << ":" << minutes << ":" << seconds << endl;
+}
+
+
+//this function prints the 24 hour clock
+void printMilitaryClock() {
+	if (hour > 23) {
+		hour = 0;
+	}
+	std::cout << "24-HOUR CLOCK" << endl << hour << ":" << minutes << ":" << seconds << endl;
+}
+
+//this is the menu loop
+int displayMenu() {
+	int menuChoice;
+
+	while (true) {
+		
+		std::cout << "********************" << std::endl;
+		std::cout << "*	Enter Your Choice *" << std::endl;
+		std::cout << "*	1-Add One Hour	  *" << std::endl;
+		std::cout << "*	2-Add One Minute  *" << std::endl;
+		std::cout << "*	3-Add One Second  *" << std::endl;
+		std::cout << "*	4-Exit Program	  *" << std::endl;
+		std::cout << "********************" << std::endl;
+
+		std::cin >> menuChoice;
+
+		printClock();
+		printMilitaryClock();
+
+
+		//Menu choice selection
+		switch (menuChoice) {
+		case 1:
+			oneHour();
+			break;
+		case 2:
+			oneMinute();
+			break;
+		case 3:
+			oneSecond();
+			break;
+		case 4:
+			return 0;
+		}
+	}
+}
+
+//main method to get the time, display menu, and print the clocks
+int main() {
+	GetTime();
+	printClock();
+	printMilitaryClock();
+	displayMenu();
+
 }
